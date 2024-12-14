@@ -21,7 +21,13 @@ export class FileController {
   }))
   async uploadFile(@UploadedFile() file: Express.Multer.File) {
     try {
-      const ocrResult = await this.fileService.processOCR(file.path);
+      let ocrResult = '';
+      if (file.mimetype === 'application/xml' || file.mimetype === 'text/xml') {
+        const xmlResult = await this.fileService.processXML(file.path);
+        ocrResult = JSON.stringify(xmlResult);
+      } else {
+        ocrResult = await this.fileService.processOCR(file.path);
+      }
       const llmResponse = await this.fileService.getLLMResponse(ocrResult);
       const savedFile = await this.fileService.saveFileData(file.filename, file.originalname, ocrResult, llmResponse);
       return savedFile;

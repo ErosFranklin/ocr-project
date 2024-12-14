@@ -2,6 +2,8 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as Tesseract from 'tesseract.js';
 import axios from 'axios';
+import * as fs from 'fs';
+import * as xml2js from 'xml2js';
 
 @Injectable()
 export class FileService {
@@ -21,6 +23,17 @@ export class FileService {
       return result.data.text;
     } catch (error) {
       throw new HttpException('Error processing OCR', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async processXML(filePath: string): Promise<any> {
+    try {
+      const xmlData = fs.readFileSync(filePath, 'utf8');
+      const parser = new xml2js.Parser();
+      const result = await parser.parseStringPromise(xmlData);
+      return result;
+    } catch (error) {
+      throw new HttpException('Error processing XML', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
