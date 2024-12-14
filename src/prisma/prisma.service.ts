@@ -3,9 +3,9 @@ import { PrismaClient } from '@prisma/client';
 
 @Injectable()
 export class PrismaService extends PrismaClient {
-  file: any;
+  customFile: any;
   constructor() {
     super();
-    this.file = {}; // Initialize the file property
+    this.customFile = {}; // Initialize the customFile property
   }
 }
