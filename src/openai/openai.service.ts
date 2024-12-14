@@ -15,7 +15,7 @@ export class OpenAIService {
     const maxRetries = 5;
     let attempt = 0;
     let delay = 1000; // 1 second
-    const model = process.env.OPENAI_MODEL || 'gpt-3.5-turbo';
+    const model = 'gpt-3.5-turbo';
 
     while (attempt < maxRetries) {
       try {
