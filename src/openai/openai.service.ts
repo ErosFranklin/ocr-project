@@ -12,11 +12,15 @@ export class OpenAIService {
   }
 
   async getLLMResponse(prompt: string): Promise<string> {
-    const response = await this.openai.completions.create({
-      model: 'text-davinci-003',
-      prompt,
-      max_tokens: 150,
+    const response = await this.openai.chat.completions.create({
+        model: 'gpt-3.5-turbo',
+        messages: [
+          { role: 'user', content: prompt }, // Substituí 'Sua mensagem aqui...' pelo parâmetro prompt
+        ],
+        max_tokens: 100,
     });
-    return response.choices[0].text;
-  }
+
+    // A resposta correta é acessada pelo campo message.content
+    return response.choices[0].message.content;
+}
 }
