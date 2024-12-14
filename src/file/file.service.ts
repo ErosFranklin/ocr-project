@@ -42,7 +42,6 @@ export class FileService {
   }
 
   async extractInvoiceData(text: string): Promise<any> {
-    // Use expressões regulares ou outras técnicas para extrair informações relevantes do texto
     const invoiceData = {
       date: this.extractDate(text),
       total: this.extractTotal(text),
