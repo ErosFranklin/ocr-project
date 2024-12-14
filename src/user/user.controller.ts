@@ -15,7 +15,7 @@ export class UserController {
     return this.userService.loginUser(loginUserDto.email, loginUserDto.password);
   }
 
-  @Get()
+  @Get('/')
   async getAllUsers() {
     return this.userService.getAllUsers();
   }
