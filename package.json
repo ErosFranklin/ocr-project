@@ -35,7 +35,8 @@
     "openai": "^4.76.3",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
-    "tesseract.js": "^5.1.1"
+    "tesseract.js": "^5.1.1",
+    "xml2js": "^0.6.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
@@ -46,6 +47,7 @@
     "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^22.10.2",
     "@types/supertest": "^6.0.0",
+    "@types/xml2js": "^0.4.14",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
     "eslint": "^8.0.0",
