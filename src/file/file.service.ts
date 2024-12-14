@@ -8,7 +8,11 @@ export class FileService {
   constructor(private readonly prisma: PrismaService) {}
 
   async getAllFiles() {
-    return this.prisma.file.findMany();
+    try {
+      return this.prisma.file.findMany();
+    } catch (error) {
+      throw new HttpException('Error fetching files', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   async processOCR(filePath: string): Promise<string> {
@@ -37,6 +41,8 @@ export class FileService {
           description: originalname,
           ocrText: ocrResult,
           llmResponse: llmResponse,
+          createdAt: new Date(),
+          updatedAt: new Date(),
         },
       });
     } catch (error) {
