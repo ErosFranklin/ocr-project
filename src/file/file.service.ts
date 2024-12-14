@@ -4,10 +4,14 @@ import * as Tesseract from 'tesseract.js';
 import axios from 'axios';
 import * as fs from 'fs';
 import * as xml2js from 'xml2js';
+import { OpenAIService } from '../openai/openai.service';
 
 @Injectable()
 export class FileService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly openAIService: OpenAIService,
+  ) {}
 
   async getAllFiles() {
     try {
@@ -37,10 +41,41 @@ export class FileService {
     }
   }
 
-  async getLLMResponse(text: string): Promise<string> {
+  async extractInvoiceData(text: string): Promise<any> {
+    // Use expressões regulares ou outras técnicas para extrair informações relevantes do texto
+    const invoiceData = {
+      date: this.extractDate(text),
+      total: this.extractTotal(text),
+      items: this.extractItems(text),
+    };
+    return invoiceData;
+  }
+
+  extractDate(text: string): string {
+    const dateRegex = /\b\d{2}\/\d{2}\/\d{4}\b/;
+    const match = text.match(dateRegex);
+    return match ? match[0] : 'Date not found';
+  }
+
+  extractTotal(text: string): string {
+    const totalRegex = /Total:\s*\$?\d+(\.\d{2})?/;
+    const match = text.match(totalRegex);
+    return match ? match[0] : 'Total not found';
+  }
+
+  extractItems(text: string): string[] {
+    const itemsRegex = /Item:\s*(.*)/g;
+    const matches = [];
+    let match;
+    while ((match = itemsRegex.exec(text)) !== null) {
+      matches.push(match[1]);
+    }
+    return matches;
+  }
+
+  async getLLMResponse(prompt: string): Promise<string> {
     try {
-      const response = await axios.post('https://ocr-project-v2gi.onrender.com/openai/completion', { prompt: text });
-      return response.data as string;
+      return await this.openAIService.getLLMResponse(prompt);
     } catch (error) {
       throw new HttpException('Error getting LLM response', HttpStatus.INTERNAL_SERVER_ERROR);
     }

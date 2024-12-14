@@ -1,9 +1,9 @@
 import { Controller, Get, Post, UseInterceptors, UploadedFile, HttpException, HttpStatus } from '@nestjs/common';
-import { Express } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileService } from './file.service';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { Express } from 'express';
 
 @Controller('files')
 export class FileController {
@@ -28,10 +28,12 @@ export class FileController {
       } else {
         ocrResult = await this.fileService.processOCR(file.path);
       }
-      const llmResponse = await this.fileService.getLLMResponse(ocrResult);
+      const invoiceData = await this.fileService.extractInvoiceData(ocrResult);
+      const llmResponse = await this.fileService.getLLMResponse(JSON.stringify(invoiceData));
       const savedFile = await this.fileService.saveFileData(file.filename, file.originalname, ocrResult, llmResponse);
       return savedFile;
     } catch (error) {
+      console.error('Error processing file:', error);
       throw new HttpException('Error processing file', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
