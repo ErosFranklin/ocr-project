@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { createUser, getAllUsers } from './api';
+
 
 function App() {
   const [users, setUsers] = useState([]);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     getAllUsers().then(response => {
@@ -37,6 +40,7 @@ function App() {
         return alert('Erro ao criar usuário');
       }
       setUsers(prevUsers => [...prevUsers, response.data]);
+      navigate('/login')
     } catch (error) {
       console.error('Erro ao criar usuário:', error);
     }
@@ -57,15 +61,9 @@ function App() {
         <input type="password" placeholder="********" value={password} onChange={(e) => setPassword(e.target.value)} required/>
         <button onClick={handleCreateUser}>Cadastrar-se</button>
       </div>
-      {/* 
-        <div>
-          <h2>Login</h2>
-          <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-          <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-          <button onClick={handleLoginUser}>Login</button>
-      </div> */}
     </div>
   );
 }
+
 
 export default App;
