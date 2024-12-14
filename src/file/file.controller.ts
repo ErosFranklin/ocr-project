@@ -1,4 +1,4 @@
-import { Controller, Get, Post, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, UseInterceptors, UploadedFile, HttpException, HttpStatus } from '@nestjs/common';
 import { Express } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileService } from './file.service';
@@ -20,10 +20,14 @@ export class FileController {
     }),
   }))
   async uploadFile(@UploadedFile() file: Express.Multer.File) {
-    const ocrResult = await this.fileService.processOCR(file.path);
-    const llmResponse = await this.fileService.getLLMResponse(ocrResult);
-    const savedFile = await this.fileService.saveFileData(file.filename, file.originalname, ocrResult, llmResponse);
-    return savedFile;
+    try {
+      const ocrResult = await this.fileService.processOCR(file.path);
+      const llmResponse = await this.fileService.getLLMResponse(ocrResult);
+      const savedFile = await this.fileService.saveFileData(file.filename, file.originalname, ocrResult, llmResponse);
+      return savedFile;
+    } catch (error) {
+      throw new HttpException('Error processing file', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Get('all')

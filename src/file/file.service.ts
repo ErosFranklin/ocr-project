@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as Tesseract from 'tesseract.js';
 import axios from 'axios';
@@ -12,23 +12,35 @@ export class FileService {
   }
 
   async processOCR(filePath: string): Promise<string> {
-    const result = await Tesseract.recognize(filePath, 'eng');
-    return result.data.text;
+    try {
+      const result = await Tesseract.recognize(filePath, 'eng');
+      return result.data.text;
+    } catch (error) {
+      throw new HttpException('Error processing OCR', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   async getLLMResponse(text: string): Promise<string> {
-    const response = await axios.post('https://ocr-project-v2gi.onrender.com/openai/completion', { prompt: text });
-    return response.data as string;
+    try {
+      const response = await axios.post('https://ocr-project-v2gi.onrender.com/openai/completion', { prompt: text });
+      return response.data as string;
+    } catch (error) {
+      throw new HttpException('Error getting LLM response', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   async saveFileData(filename: string, originalname: string, ocrResult: string, llmResponse: string) {
-    return this.prisma.file.create({
-      data: {
-        name: filename,
-        description: originalname,
-        ocrText: ocrResult,
-        llmResponse: llmResponse,
-      },
-    });
+    try {
+      return this.prisma.file.create({
+        data: {
+          name: filename,
+          description: originalname,
+          ocrText: ocrResult,
+          llmResponse: llmResponse,
+        },
+      });
+    } catch (error) {
+      throw new HttpException('Error saving file data', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }
