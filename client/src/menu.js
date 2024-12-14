@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { getAllFile } from './api';
 import { getLLMResponse } from './openaiService';
+import axios from 'axios';
 
 function Menu() {
   const [files, setFiles] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
   const [llmResponse, setLLMResponse] = useState('');
+  const [uploadFile, setUploadFile] = useState(null);
 
   useEffect(() => {
     getAllFile().then(response => {
@@ -39,6 +41,34 @@ function Menu() {
     element.click();
   };
 
+  const handleFileChange = (event) => {
+    setUploadFile(event.target.files[0]);
+  };
+
+  const handleFileUpload = async () => {
+    if (!uploadFile) {
+      return alert('Please select a file to upload');
+    }
+
+    const formData = new FormData();
+    formData.append('file', uploadFile);
+
+    try {
+      const response = await axios.post('https://ocr-project-v2gi.onrender.com/files/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      setFiles([...files, response.data]);
+      setUploadFile(null);
+      alert('File uploaded successfully');
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      alert('Error uploading file');
+    }
+  };
+
   return (
     <div className="Menu">
       <h1>NotaOne</h1>
@@ -50,7 +80,8 @@ function Menu() {
         ))}
       </ul>
       <div className="AddFile">
-        {/* File upload form */}
+        <input type="file" onChange={handleFileChange} />
+        <button onClick={handleFileUpload}>Upload File</button>
       </div>
       {selectedFile && (
         <div className="FileDetails">
