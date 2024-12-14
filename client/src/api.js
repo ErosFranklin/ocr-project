@@ -10,4 +10,5 @@ export const loginUser = (data) => api.post('/users/login', data);
 export const getAllUsers = () => api.get('/users');
 
 export const getAllFile = () => api.get('/files/all');
+export const uploadFile = (data) => api.post('/files/upload', data);
 export const menuFileAdd = (data) => api.post('/menu/add', data);
