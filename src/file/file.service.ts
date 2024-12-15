@@ -42,12 +42,24 @@ export class FileService {
   }
 
   async extractInvoiceData(text: string): Promise<any> {
-    const invoiceData = {
-      date: this.extractDate(text),
-      total: this.extractTotal(text),
-      items: this.extractItems(text),
-    };
-    return invoiceData;
+    const prompt = `
+    O seguinte texto foi extraído de uma nota fiscal:
+    "${text}"
+  
+    Identifique as seguintes informações:
+    1. Data da nota fiscal.
+    2. Valor total.
+    3. Lista de itens.
+  
+    Formato de resposta:
+    - Data: [data]
+    - Total: [valor total]
+    - Itens: [item1, item2, ...]
+    `;
+  
+    const llmResponse = await this.getLLMResponse(prompt);
+  
+    return { prompt, llmResponse };
   }
 
   extractDate(text: string): string {
