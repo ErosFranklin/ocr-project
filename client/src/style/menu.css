@@ -1,0 +1,76 @@
+*
+{
+    margin:0;
+    padding:0;
+    box-sizing: border-box;
+}
+.body{
+    width: 100vw;
+    height: 100vh;
+    font-family: 'tahoma', 'Reboto','sans-serif';
+}
+.Menu{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    background-color: rgb(226, 226, 226);
+}
+.AddFile{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(226, 226, 226);
+}
+.btn-upload{
+    width: 13%;
+    height: 10%;
+    padding:5px;
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: #f57c00;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.2);
+    margin:2%;
+    transition: .2s ease-in-out;
+}
+.btn-upload:hover{
+    background-color: #ff9800;
+}
+.btn-change{
+    width: 30%;
+    height: 10%;
+    padding:5px;
+    font-size: 1rem;
+    font-weight: bold;
+    background-color: #f57c00;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.2);
+    margin:2%;
+    transition: .2s ease-in-out;
+}
+.FilesDetails{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+}
+.FilesDetails > h3{
+    color: #f57c00;
+    text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.2);
+    font-style: italic;
+    font-weight: bold;
+}

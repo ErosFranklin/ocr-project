@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { getAllFile } from './api';
-import { getLLMResponse } from './openaiService';
+import { getAllFile } from './api'; // Certifique-se de que esse arquivo existe e contém a função getAllFile
 import axios from 'axios';
+import './style/menu.css';
 
 function Menu() {
   const [files, setFiles] = useState([]);
@@ -9,6 +9,7 @@ function Menu() {
   const [llmResponse, setLLMResponse] = useState('');
   const [uploadFile, setUploadFile] = useState(null);
 
+  // Carregar arquivos ao inicializar
   useEffect(() => {
     getAllFile().then(response => {
       if (Array.isArray(response.data)) {
@@ -21,12 +22,20 @@ function Menu() {
     });
   }, []);
 
+  // Seleção do arquivo e chamada para obter resposta do LLM
   const handleFileSelect = async (file) => {
     setSelectedFile(file);
-    const response = await getLLMResponse(`Explain the following text: ${file.extractedText}`);
-    setLLMResponse(response);
+    try {
+      const response = await axios.post('/api/files/extract-llm-response', { 
+        extractedText: file.extractedText 
+      });
+      setLLMResponse(response.data.llmResponse);
+    } catch (error) {
+      console.error('Error getting LLM response:', error);
+    }
   };
 
+  // Função de download do arquivo
   const handleDownload = () => {
     const element = document.createElement('a');
     const fileContent = `
@@ -41,10 +50,12 @@ function Menu() {
     element.click();
   };
 
+  // Seleção de arquivo para upload
   const handleFileChange = (event) => {
     setUploadFile(event.target.files[0]);
   };
 
+  // Envio de arquivo para o backend
   const handleFileUpload = async () => {
     if (!uploadFile) {
       return alert('Please select a file to upload');
@@ -59,7 +70,6 @@ function Menu() {
           'Content-Type': 'multipart/form-data',
         },
       });
-
       setFiles([...files, response.data]);
       setUploadFile(null);
       alert('File uploaded successfully');
@@ -70,29 +80,41 @@ function Menu() {
   };
 
   return (
-    <div className="Menu">
-      <h1>NotaOne</h1>
-      <ul>
+    <div className='body'>
+      <div className="Menu">
+      <div className="title">
+        <h1>NotaOne</h1>   
+      </div>
+
+      <div className="AddFile">
+        <input className='btn-change' type="file" onChange={handleFileChange} />
+        <button className='btn-upload' onClick={handleFileUpload}>Upload do Arquivo</button>
+        
+      <div className="Files">
+
+      {selectedFile && (
+        <div className="FileDetails">
+          <h2>{selectedFile.name}</h2>
+          <p>{selectedFile.extractedText}</p>
+          <h3>LLM Resposta:</h3>
+          <p>{llmResponse}</p>
+          <button onClick={handleDownload}>Download do Arquivo</button>
+        </div>
+      )}
+        </div>
+        <div className='allFile'>
+            <ul>
         {files.map(file => (
           <li key={file.id} onClick={() => handleFileSelect(file)}>
             {file.name} - {file.description}
           </li>
         ))}
       </ul>
-      <div className="AddFile">
-        <input type="file" onChange={handleFileChange} />
-        <button onClick={handleFileUpload}>Upload File</button>
-      </div>
-      {selectedFile && (
-        <div className="FileDetails">
-          <h2>{selectedFile.name}</h2>
-          <p>{selectedFile.extractedText}</p>
-          <h3>LLM Response:</h3>
-          <p>{llmResponse}</p>
-          <button onClick={handleDownload}>Download</button>
         </div>
-      )}
+       </div>
+      </div>
     </div>
+   
   );
 }
 

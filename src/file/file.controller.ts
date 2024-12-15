@@ -1,4 +1,4 @@
-import { Controller, Get, Post, UseInterceptors, UploadedFile, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, UseInterceptors, UploadedFile, HttpException, HttpStatus, Body } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileService } from './file.service';
 import { diskStorage } from 'multer';
@@ -36,6 +36,12 @@ export class FileController {
       console.error('Error processing file:', error);
       throw new HttpException('Error processing file', HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
+  @Post('extract-llm-response')
+  async extractLLMResponse(@Body() body: { extractedText: string }) {
+    const { extractedText } = body;
+    const result = await this.fileService.extractInvoiceData(extractedText);
+    return { llmResponse: result.llmResponse };
   }
 
   @Get('all')
