@@ -8,7 +8,7 @@ async function bootstrap() {
 
   // Permitir CORS apenas de origens específicas
   app.enableCors({
-    origin: ['http://localhost:3000', 'https://ocr-project-v2gi.onrender.com'], // URL específica
+    origin: ['http://localhost:3000', 'https://ocr-project-v2gi.onrender.com', 'https://ocr-project-phi.vercel.app',], // URL específica
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true, // Permitir envio de cookies, caso necessário
